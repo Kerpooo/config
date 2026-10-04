@@ -1,6 +1,6 @@
 # Estilo tipo powerlevel10k "lean", simple
 
-# Izquierda: directorio, git y el símbolo ❯ en línea aparte
+# Izquierda: directorio, git y el símbolo en línea aparte
 SPACESHIP_PROMPT_ADD_NEWLINE=true
 SPACESHIP_PROMPT_ORDER=(
   dir
@@ -20,9 +20,7 @@ SPACESHIP_RPROMPT_ORDER=(
   time
 )
 
-# Símbolo del prompt (verde si va bien, rojo si el último comando falló)
-SPACESHIP_CHAR_SYMBOL="❯ "
-SPACESHIP_CHAR_SUFFIX=""
+# Símbolo del prompt: el de Spaceship por defecto (➜), verde si va bien y rojo si falló
 SPACESHIP_CHAR_COLOR_SUCCESS="green"
 SPACESHIP_CHAR_COLOR_FAILURE="red"
 
