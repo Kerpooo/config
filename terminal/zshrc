@@ -110,3 +110,5 @@ alias gp='git push'
 alias gpl='git pull'
 alias gd='git diff'
 alias gl='git log --oneline --graph --decorate -15'
+# gcm: commits en formato conventional commits con emoji opcional (ver git-conventional.zsh)
+source "${${(%):-%x}:A:h}/git-conventional.zsh"
