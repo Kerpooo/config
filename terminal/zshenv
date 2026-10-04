@@ -1,0 +1,2 @@
+# Evita que /etc/zsh/zshrc ejecute compinit antes que ~/.zshrc (ya lo hacemos allí con nuestras rutas)
+skip_global_compinit=1

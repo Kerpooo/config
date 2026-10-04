@@ -1,0 +1,62 @@
+# Estilo tipo powerlevel10k "lean", simple
+
+# Izquierda: directorio, git y el símbolo ❯ en línea aparte
+SPACESHIP_PROMPT_ADD_NEWLINE=true
+SPACESHIP_PROMPT_ORDER=(
+  dir
+  git
+  line_sep
+  char
+)
+
+# Derecha: errores, duración de comandos lentos, node, hora
+SPACESHIP_RPROMPT_ORDER=(
+  exit_code
+  exec_time
+  node
+  terraform
+  aws
+  azure
+  time
+)
+
+# Símbolo del prompt (verde si va bien, rojo si el último comando falló)
+SPACESHIP_CHAR_SYMBOL="❯ "
+SPACESHIP_CHAR_SUFFIX=""
+SPACESHIP_CHAR_COLOR_SUCCESS="green"
+SPACESHIP_CHAR_COLOR_FAILURE="red"
+
+# Directorio
+SPACESHIP_DIR_COLOR="blue"
+SPACESHIP_DIR_TRUNC=3
+SPACESHIP_DIR_TRUNC_REPO=false
+
+# Git compacto: rama + marcas de estado
+SPACESHIP_GIT_PREFIX=""
+SPACESHIP_GIT_BRANCH_COLOR="green"
+SPACESHIP_GIT_STATUS_PREFIX=" "
+SPACESHIP_GIT_STATUS_SUFFIX=""
+SPACESHIP_GIT_STATUS_COLOR="yellow"
+
+# Derecha
+SPACESHIP_EXIT_CODE_SHOW=true
+SPACESHIP_EXIT_CODE_PREFIX=""
+SPACESHIP_EXIT_CODE_SUFFIX=" "
+SPACESHIP_EXEC_TIME_PREFIX=""
+SPACESHIP_EXEC_TIME_SUFFIX=" "
+SPACESHIP_EXEC_TIME_ELAPSED=2
+SPACESHIP_NODE_PREFIX=""
+SPACESHIP_NODE_SUFFIX=" "
+SPACESHIP_NODE_COLOR="green"
+SPACESHIP_TIME_SHOW=true
+SPACESHIP_TIME_FORMAT="%D{%H:%M}"
+SPACESHIP_TIME_PREFIX=""
+SPACESHIP_TIME_COLOR="242"
+
+# Solo se muestran cuando estás en ese contexto
+SPACESHIP_TERRAFORM_PREFIX=""
+SPACESHIP_TERRAFORM_SUFFIX=" "
+SPACESHIP_AWS_PREFIX=""
+SPACESHIP_AWS_SUFFIX=" "
+SPACESHIP_AZURE_PREFIX=""
+SPACESHIP_AZURE_SUFFIX=" "
