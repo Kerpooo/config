@@ -51,7 +51,6 @@ clone spaceship-prompt spaceship-prompt spaceship
 clone zsh-users zsh-autosuggestions zsh-autosuggestions
 clone zsh-users zsh-syntax-highlighting zsh-syntax-highlighting
 clone zsh-users zsh-completions zsh-completions
-clone Aloxaf fzf-tab fzf-tab
 
 # Completados generados (requieren uv y pnpm instalados)
 command -v uv   >/dev/null && uv generate-shell-completion zsh > "$HOME/.zsh/completions/_uv" || true

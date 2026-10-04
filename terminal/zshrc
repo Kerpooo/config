@@ -35,33 +35,31 @@ esac
 # Colores de ls: directorios en azul y negrita, archivos en blanco,
 # ejecutables en verde, enlaces simbólicos en magenta
 export LS_COLORS="di=1;34:fi=0:ex=1;32:ln=35:*.zip=31:*.tar=31:*.gz=31:*.md=33:*.json=33"
-if [[ "$OSTYPE" == darwin* ]]; then
-  alias ls='ls -G'; alias ll='ls -lahG'
-else
-  alias ls='ls --color=auto'; alias ll='ls -lah --color=auto'
-fi
-# eza reemplaza a ls si está instalado (sin iconos; agrega --icons si usas Nerd Font)
+# eza si está instalado (sin iconos); si no, ls normal
 if command -v eza >/dev/null; then
   alias ls='eza --group-directories-first'
   alias ll='eza -lah --git --group-directories-first'
   alias lt='eza --tree --level=2 --group-directories-first'
+elif [[ "$OSTYPE" == darwin* ]]; then
+  alias ls='ls -G'; alias ll='ls -lahG'
+else
+  alias ls='ls --color=auto'; alias ll='ls -lah --color=auto'
 fi
 
 # --- Autocompletado ---
 fpath=("$HOME/.zsh/completions" "$HOME/.zsh/zsh-completions/src" $fpath)
 autoload -Uz compinit
 # Reconstruye la caché de completados solo si tiene más de 24h; si no, la reutiliza (-C)
-if [[ -n "$HOME"/.zcompdump(#qN.mh-24) ]]; then
+_zcd=("$HOME"/.zcompdump(N.mh-24))
+if (( $#_zcd )); then
   compinit -C
 else
   compinit 2>/dev/null   # el enlace roto de docker (Docker Desktop apagado) puede imprimir un error inofensivo
+  touch "$HOME/.zcompdump"   # renueva la fecha para que los próximos arranques usen la caché
 fi
 unset _zcd
-zstyle ':completion:*' menu no   # fzf-tab se encarga del menú
+zstyle ':completion:*' menu select   # menú de Tab nativo, navegable con las flechas
 zstyle ':completion:*' verbose yes                          # muestra la descripción de cada opción/subcomando
-zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
-zstyle ':completion:*:messages' format '%F{purple}%d%f'
-zstyle ':completion:*' group-name ''
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'   # no distingue mayúsculas
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
@@ -69,22 +67,17 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 HISTFILE="$HOME/.zsh_history"; HISTSIZE=50000; SAVEHIST=50000
 setopt HIST_IGNORE_ALL_DUPS SHARE_HISTORY
 
-# fzf-tab: Tab abre un menú fzf con búsqueda difusa (debe ir después de compinit)
-source "$HOME/.zsh/fzf-tab/fzf-tab.plugin.zsh"
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null || ls -1 $realpath'
-zstyle ':fzf-tab:complete:(ls|cat|less|code|vim|nano):*' fzf-preview '[ -d $realpath ] && { eza -1 --color=always $realpath 2>/dev/null || ls -1 $realpath; } || head -50 $realpath 2>/dev/null'
-zstyle ':fzf-tab:*' switch-group '<' '>'   # cambia de grupo con < y >
-
 # Sugerencias en gris desde el historial (→ para aceptar)
 source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
-# fzf: Ctrl+R historial difuso, Ctrl+T archivos, Alt+C cambiar directorio
+# fzf: Ctrl+R historial difuso, Ctrl+T archivos
 # Ignorar carpetas ocultas, dependencias/gestores de paquetes y lockfiles
 _fzf_dirs="-name '.*' -o -name node_modules -o -name bower_components -o -name __pycache__ -o -name venv -o -name site-packages -o -name vendor -o -name target -o -name Pods -o -name dist -o -name build"
 _fzf_locks="-name package-lock.json -o -name pnpm-lock.yaml -o -name yarn.lock -o -name uv.lock -o -name poetry.lock -o -name Cargo.lock -o -name composer.lock -o -name Gemfile.lock -o -name go.sum"
 export FZF_CTRL_T_COMMAND="find . -mindepth 1 \\( $_fzf_dirs \\) -prune -o -type f ! \\( $_fzf_locks \\) -print 2>/dev/null | sed 's|^\\./||'"
-export FZF_ALT_C_COMMAND="find . -mindepth 1 \\( $_fzf_dirs \\) -prune -o -type d -print 2>/dev/null | sed 's|^\\./||'"
 source <(fzf --zsh)
+bindkey -r '^[c'              # sin Alt+C: para cambiar de carpeta se usa z
+bindkey '^I' expand-or-complete   # Tab normal de zsh, sin el disparador **<Tab> de fzf
 
 # Debe ir al final: resalta comandos válidos/inválidos
 source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
@@ -93,17 +86,13 @@ source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 
 # --- Comodidades ---
-setopt AUTO_CD            # escribir el nombre de una carpeta entra a ella
 setopt CORRECT            # sugiere correcciones de comandos mal escritos
 export COLORTERM=truecolor
-alias ..='cd ..'
-alias ...='cd ../..'
 
 # Atajos de git
 alias gs='git status -sb'
 alias ga='git add'
 alias gaa='git add -A'
-alias gc='git commit -m'
 alias gco='git checkout'
 alias gb='git branch'
 alias gp='git push'
