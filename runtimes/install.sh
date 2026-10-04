@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-# Instala uv (Python) y nvm + Node LTS (JavaScript).
+# Instala uv (Python) y nvm + la última versión de Node (JavaScript).
 # Uso: ./install.sh          instala ambos
 #      ./install.sh uv       solo uv
-#      ./install.sh nvm      solo nvm y Node LTS
+#      ./install.sh nvm      solo nvm y la última versión de Node (se actualiza al volver a ejecutarlo)
 # Soporta Ubuntu/WSL y macOS.
 set -euo pipefail
 
-NVM_VERSION="v0.40.8"
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
 # --- Qué instalar ---
@@ -49,11 +48,15 @@ install_uv() {
   fi
 }
 
-# --- nvm + Node LTS (https://github.com/nvm-sh/nvm) ---
+# --- nvm + última versión de Node (https://github.com/nvm-sh/nvm) ---
 install_nvm() {
   if [ -s "$NVM_DIR/nvm.sh" ]; then
     echo "nvm ya está instalado en $NVM_DIR"
   else
+    # Última versión publicada de nvm (la redirección de /releases/latest apunta a su tag)
+    NVM_VERSION="$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/nvm-sh/nvm/releases/latest | sed 's|.*/||')"
+    case "$NVM_VERSION" in v[0-9]*) ;; *) echo "No se pudo averiguar la última versión de nvm"; exit 1 ;; esac
+    echo "Instalando nvm $NVM_VERSION"
     # PROFILE=/dev/null evita que el instalador edite ~/.zshrc (nvm ya se carga ahí en modo perezoso)
     curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" | PROFILE=/dev/null NVM_DIR="$NVM_DIR" bash
   fi
@@ -61,7 +64,8 @@ install_nvm() {
   set +u
   # shellcheck disable=SC1091
   . "$NVM_DIR/nvm.sh"
-  nvm install --lts
+  nvm install node            # siempre la última versión de Node (no solo la LTS)
+  nvm alias default node >/dev/null
   set -u
   echo "Node $(node -v) / npm $(npm -v)"
 }
